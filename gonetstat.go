@@ -68,12 +68,12 @@ func getData(t string) ([]string, error) {
 	} else if t == "udp6" {
 		proc_t = PROC_UDP6
 	} else {
-		return "", fmt.Errorf("%s is a invalid type, 'tcp' and 'udp' only", t)
+		return nil, fmt.Errorf("%s is a invalid type, expected 'tcp' or 'udp'", t)
 	}
 
 	data, err := ioutil.ReadFile(proc_t)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	lines := strings.Split(string(data), "\n")
 
@@ -161,7 +161,7 @@ func getProcessExe(pid string) string {
 	exe := fmt.Sprintf("/proc/%s/exe", pid)
 	path, err := os.Readlink(exe)
 	if err != nil {
-		log.Warnf("failed to readlink(%q): %v", exe, err)
+		log.Warnf("failed to readlink %v: %v", exe, err)
 		path = "<unknown>"
 	}
 	return path
@@ -256,12 +256,12 @@ func Udp() ([]Process, error) {
 	return netstat("udp")
 }
 
-func Tcp6() ([]process, error) {
+func Tcp6() ([]Process, error) {
 	// Get a slice of Process type with TCP6 data
 	return netstat("tcp6")
 }
 
-func Udp6() ([]process, error) {
+func Udp6() ([]Process, error) {
 	// Get a slice of Process type with UDP6 data
 	return netstat("udp6")
 }
